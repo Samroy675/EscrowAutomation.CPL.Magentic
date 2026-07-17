@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["EA.CPL.Magentic.UI.styles.css"]" />
+    <ImportMap />
+    <HeadOutlet />
+    <!-- Inline SVG favicon to avoid browser requesting /favicon.ico -->
+    <link rel="icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><text x="0" y="14" font-size="14">M</text></svg>' />
+</head>
+
+<body>
+    <Routes />
+    <!-- Try to load SignalR from CDN; if blocked, fall back to local copy at /lib/signalr/signalr.min.js -->
+    <script>
+        (function() {
+            function inject(src, onload) {
+                var s = document.createElement('script'); s.src = src; s.onload = onload; s.async = false; document.head.appendChild(s);
+            }
+
+            // If signalR already present, do nothing
+            if (window.signalR) return;
+
+            // Try CDN first
+            inject('https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js', function() {
+                if (window.signalR) return;
+                // If still not available (tracking prevention), try local fallback
+                inject('/lib/signalr/signalr.min.js');
+            });
+        })();
+    </script>
+    <script src="/js/logClient.js"></script>
+    <script src="_framework/blazor.web.js"></script>
+</body>
+
+</html>

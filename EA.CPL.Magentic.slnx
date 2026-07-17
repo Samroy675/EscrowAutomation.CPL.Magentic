@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/API/">
+    <Project Path="EA.CPL.Intake.API/EA.CPL.Intake.API.csproj" Id="26d413a6-4c86-406a-99f2-c0a4e2fa9c31" />
+  </Folder>
+  <Folder Name="/FunctionApps/">
+    <Project Path="WeatherFunctionApp/WeatherFunctionApp.csproj" />
+    <Project Path="SPSOrderFunctionApp/SPSOrderFunctionApp.csproj" />
+  </Folder>
+  <Project Path="EA.CPL.Magentic.Orchestration/EA.CPL.Magentic.Orchestration.csproj" />
+  <Project Path="EA.CPL.Magentic.UI/EA.CPL.Magentic.UI.csproj" Id="e544a063-be53-4106-a56c-2141740e8b3b" />
+</Solution>

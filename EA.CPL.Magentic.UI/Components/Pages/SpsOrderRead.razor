@@ -1,0 +1,393 @@
+@page "/sps-order"
+@using EA.CPL.Magentic.Orchestration.Models
+@using System.Net.Http.Json
+@using EA.CPL.Magentic.UI.Services
+@inject HttpClient Http
+@inject SignalRLogClient ServerLogClient
+@inject LocalLogService LocalLogService
+@rendermode InteractiveServer
+@implements IAsyncDisposable
+
+<div class="orchestration-controls">
+    <div class="control-group">
+        <label for="orderNumber">Order Number</label>
+        <input id="orderNumber" type="text" @bind="orderNumber" placeholder="Enter SPS order number" disabled="@isRunning" />
+    </div>
+    <div class="button-group">
+        <button @onclick="StartAsync" disabled="@(isRunning || string.IsNullOrWhiteSpace(orderNumber))" class="btn btn-primary">
+            @if (isRunning)
+            {
+                <span class="spinner"></span><text>Running...</text>
+            }
+            else
+            {
+                <span>🚀 Run Orchestration</span>
+            }
+        </button>
+        <button @onclick="Approve" disabled="@(!canApprove || isRunning)" class="btn btn-success">✓ Approve</button>
+        <button @onclick="Replan" disabled="@(!canReplan || isRunning)" class="btn btn-warning">🔄 Replan</button>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger mt-3"><strong>⚠️ Error:</strong> @errorMessage</div>
+}
+
+@if (!string.IsNullOrWhiteSpace(orchestrationId))
+{
+    <div class="status-bar mt-3">
+        <span class="status-badge @GetStatusClass(status)">@status</span>
+        <span class="text-muted" style="word-break: break-all;">ID: @orchestrationId</span>
+    </div>
+}
+
+<div class="dashboard-layout mt-4">
+    <div class="dashboard-panel logs-panel">
+        <div class="logs-container">
+            <div class="logs-header">
+                <h4>📝 Live Logs (@displayLogs.Count)</h4>
+            </div>
+            @if (displayLogs.Count == 0)
+            {
+                <div class="logs-empty">Waiting for logs...</div>
+            }
+            else
+            {
+                <ul class="logs-list">
+                    @foreach (var entry in displayLogs)
+                    {
+                        <li class="log-entry @GetLogClass(entry.Source)">
+                            <span class="log-timestamp">@entry.TimestampUtc.ToLocalTime().ToString("HH:mm:ss.fff")</span>
+                            <span class="log-source">[@entry.Source]</span>
+                            <span class="log-message" style="white-space: pre-wrap;">@entry.Message</span>
+                        </li>
+                    }
+                </ul>
+                <div class="logs-footer">
+                    <span>Latest: @displayLogs.Last().TimestampUtc.ToLocalTime().ToString("HH:mm:ss")</span>
+                    <button @onclick="ClearLogs" class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.85rem;">Clear</button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="dashboard-panel plan-panel">
+        @if (!string.IsNullOrWhiteSpace(orderResult))
+        {
+            <h4 class="panel-title">📄 SPS Order Result</h4>
+            <div class="plan-container">
+                <pre style="margin: 0; white-space: pre-wrap; word-wrap: break-word;">@orderResult</pre>
+            </div>
+
+            <div class="plan-feedback mt-3">
+                <label for="planFeedback">Plan feedback (optional):</label>
+                <textarea id="planFeedback" @bind="planFeedback" class="form-control" rows="3" placeholder="Provide revision instructions or feedback for the plan"></textarea>
+                <div class="btn-group mt-2">
+                    <button @onclick="SubmitPlanFeedback" class="btn btn-primary" disabled="@isRunning">Submit Feedback</button>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="panel-empty">
+                <h4 class="panel-title">📄 SPS Order Result</h4>
+                <p class="text-muted">No order data yet. Enter an order number and run orchestration.</p>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private string orderNumber = string.Empty;
+    private string orchestrationId = string.Empty;
+    private string status = "Idle";
+    private string orderResult = string.Empty;
+    private string planFeedback = string.Empty;
+    private string errorMessage = string.Empty;
+    private bool canApprove = false;
+    private bool canReplan = false;
+    private bool isRunning = false;
+    private List<LogEntry> logs = new();
+    private List<DisplayLogEntry> displayLogs = new();
+
+    private class DisplayLogEntry
+    {
+        public DateTime TimestampUtc { get; set; }
+        public string Source { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
+    }
+
+    protected override void OnInitialized()
+    {
+        ServerLogClient.LogReceived += OnLogReceived;
+    }
+
+    private async Task StartAsync()
+    {
+        if (isRunning || string.IsNullOrWhiteSpace(orderNumber)) return;
+
+        try
+        {
+            isRunning = true;
+            errorMessage = string.Empty;
+            logs.Clear();
+            displayLogs.Clear();
+            orderResult = string.Empty;
+            status = "Running";
+            canApprove = false;
+            canReplan = false;
+
+            orchestrationId = Guid.NewGuid().ToString("N");
+            await ServerLogClient.SubscribeAsync(orchestrationId);
+
+            var request = new MagenticOrchestrationRequest
+            {
+                OrchestrationId = orchestrationId,
+                OrderNumber = orderNumber,
+                IsPlanApproved = false,
+                PlanFeedback = string.IsNullOrWhiteSpace(planFeedback) ? null : planFeedback,
+                SourceSystem = "RPA Bot - DSG",
+                SourceAccount = "RPA-DSG-SPSAPI-LU-NP",
+                Profile = "Default\\p\\cac"
+            };
+
+            var response = await Http.PostAsJsonAsync("api/orchestrations/run", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                string responseBody = await response.Content.ReadAsStringAsync();
+                errorMessage = $"API Error ({response.StatusCode}): {responseBody}";
+                status = "Error";
+                await LocalLogService.WriteSummaryAsync(orchestrationId, "Error", orderResult, errorMessage);
+                return;
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<MagenticOrchestrationResult>();
+            if (result is not null)
+            {
+                status = result.Status ?? "Unknown";
+                orderResult = result.FinalResponse ?? string.Empty;
+                orchestrationId = result.OrchestrationId ?? orchestrationId;
+                canApprove = status == "PlanCreated" || status == "Replanned";
+                canReplan = canApprove;
+                await LocalLogService.WriteSummaryAsync(orchestrationId, status, orderResult);
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+            status = "Error";
+            await LocalLogService.WriteSummaryAsync(orchestrationId, "Error", orderResult, errorMessage);
+        }
+        finally
+        {
+            isRunning = false;
+            planFeedback = string.Empty;
+        }
+    }
+
+    private async Task Approve()
+    {
+        if (string.IsNullOrEmpty(orchestrationId)) return;
+
+        try
+        {
+            isRunning = true;
+            errorMessage = string.Empty;
+
+            var request = new MagenticOrchestrationRequest
+            {
+                OrchestrationId = orchestrationId,
+                OrderNumber = orderNumber,
+                IsPlanApproved = true,
+                PlanFeedback = "approved",
+                SourceSystem = "RPA Bot - DSG",
+                SourceAccount = "RPA-DSG-SPSAPI-LU-NP",
+                Profile = "Default\\p\\cac"
+            };
+
+            var response = await Http.PostAsJsonAsync("api/orchestrations/run", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                errorMessage = $"API Error ({response.StatusCode})";
+                return;
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<MagenticOrchestrationResult>();
+            if (result is not null)
+            {
+                status = result.Status ?? status;
+                orderResult = result.FinalResponse ?? orderResult;
+                canApprove = status == "PlanCreated" || status == "Replanned";
+                canReplan = canApprove;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isRunning = false;
+            planFeedback = string.Empty;
+        }
+    }
+
+    private async Task Replan()
+    {
+        if (string.IsNullOrEmpty(orchestrationId)) return;
+
+        try
+        {
+            isRunning = true;
+            errorMessage = string.Empty;
+
+            var request = new MagenticOrchestrationRequest
+            {
+                OrchestrationId = orchestrationId,
+                OrderNumber = orderNumber,
+                IsPlanApproved = false,
+                PlanFeedback = string.IsNullOrWhiteSpace(planFeedback) ? null : planFeedback,
+                SourceSystem = "RPA Bot - DSG",
+                SourceAccount = "RPA-DSG-SPSAPI-LU-NP",
+                Profile = "Default\\p\\cac"
+            };
+
+            var response = await Http.PostAsJsonAsync("api/orchestrations/run", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                errorMessage = $"API Error ({response.StatusCode})";
+                return;
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<MagenticOrchestrationResult>();
+            if (result is not null)
+            {
+                status = result.Status ?? status;
+                orderResult = result.FinalResponse ?? orderResult;
+                canApprove = status == "PlanCreated" || status == "Replanned";
+                canReplan = canApprove;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isRunning = false;
+        }
+    }
+
+    private async Task SubmitPlanFeedback()
+    {
+        if (string.IsNullOrEmpty(orchestrationId)) return;
+
+        try
+        {
+            isRunning = true;
+            errorMessage = string.Empty;
+
+            var request = new MagenticOrchestrationRequest
+            {
+                OrchestrationId = orchestrationId,
+                OrderNumber = orderNumber,
+                IsPlanApproved = false,
+                PlanFeedback = string.IsNullOrWhiteSpace(planFeedback) ? null : planFeedback,
+                SourceSystem = "RPA Bot - DSG",
+                SourceAccount = "RPA-DSG-SPSAPI-LU-NP",
+                Profile = "Default\\p\\cac"
+            };
+
+            var response = await Http.PostAsJsonAsync("api/orchestrations/run", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                errorMessage = $"API Error ({response.StatusCode})";
+                return;
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<MagenticOrchestrationResult>();
+            if (result is not null)
+            {
+                status = result.Status ?? status;
+                orderResult = result.FinalResponse ?? orderResult;
+                canApprove = status == "PlanCreated" || status == "Replanned";
+                canReplan = canApprove;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isRunning = false;
+            planFeedback = string.Empty;
+        }
+    }
+
+    private void OnLogReceived(LogEntry entry)
+    {
+        InvokeAsync(async () =>
+        {
+            logs.Add(entry);
+
+            if (displayLogs.Count > 0 && displayLogs[^1].Source == entry.Source)
+            {
+                displayLogs[^1].Message += entry.Message;
+            }
+            else
+            {
+                displayLogs.Add(new DisplayLogEntry
+                {
+                    TimestampUtc = entry.TimestampUtc,
+                    Source = entry.Source,
+                    Message = entry.Message
+                });
+            }
+
+            await LocalLogService.AppendLogAsync(orchestrationId, entry);
+            StateHasChanged();
+        });
+    }
+
+    private void ClearLogs()
+    {
+        logs.Clear();
+        displayLogs.Clear();
+        StateHasChanged();
+    }
+
+    private string GetStatusClass(string statusValue) => statusValue?.ToLower() switch
+    {
+        "idle" => "idle",
+        "running" => "running",
+        "completed" => "success",
+        "plancreated" or "replanned" => "success",
+        "error" => "error",
+        _ => "idle"
+    };
+
+    private string GetLogClass(string source) => source?.ToLower() switch
+    {
+        "api" => "info",
+        "agent" => "info",
+        "error" => "error",
+        "warning" => "warning",
+        "success" => "success",
+        _ => "info"
+    };
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        ServerLogClient.LogReceived -= OnLogReceived;
+        if (!string.IsNullOrEmpty(orchestrationId))
+        {
+            await ServerLogClient.UnsubscribeAsync(orchestrationId);
+        }
+    }
+}
