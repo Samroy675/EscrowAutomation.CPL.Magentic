@@ -1,0 +1,937 @@
+{
+  "info": {
+    "_postman_id": "b560a6aa-3cce-4bd1-9461-00e5aa3ba135",
+    "name": "Regression-Inhere-Automation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48098548",
+    "_collection_link": "https://go.postman.co/collection/48098548-b560a6aa-3cce-4bd1-9461-00e5aa3ba135?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Messages",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/Messages",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Messages"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Orders/OrderID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-RecipientEmail",
+            "value": "Piyush.Jain@fnf.com"
+          },
+          {
+            "key": "X-UserName",
+            "value": "fnfglobal\\Piyush.Jain"
+          },
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/Orders/:orderId",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Orders",
+            ":orderId"
+          ],
+          "variable": [
+            {
+              "key": "orderId",
+              "value": "{{orderId}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Orders/Search",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          },
+          {
+            "key": "X-RecipientEmail",
+            "value": "Piyush.Jain@fnf.com"
+          },
+          {
+            "key": "X-UserName",
+            "value": "fnfglobal\\Piyush.Jain"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/Orders/Search",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Orders",
+            "Search"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Orders/OrderID/Message",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          },
+          {
+            "key": "X-RecipientEmail",
+            "value": "Piyush.Jain@fnf.com"
+          },
+          {
+            "key": "X-UserName",
+            "value": "fnfglobal\\Piyush.Jain"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/Orders/:orderId/messages",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Orders",
+            ":orderId",
+            "messages"
+          ],
+          "variable": [
+            {
+              "key": "orderId",
+              "value": "{{orderId}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Orders/OrderID/Message",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          },
+          {
+            "key": "X-RecipientEmail",
+            "value": "Piyush.Jain@fnf.com"
+          },
+          {
+            "key": "X-UserName",
+            "value": "fnfglobal\\Piyush.Jain"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "documents",
+              "type": "file",
+              "src": "/C:/Users/6152594/Downloads/Test doc.docx"
+            },
+            {
+              "key": "body",
+              "value": "Inhere  BETA API Regression",
+              "type": "text"
+            },
+            {
+              "key": "subject",
+              "value": "Inhere  BETA API Regression",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/Orders/:orderId/messages",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Orders",
+            ":orderId",
+            "messages"
+          ],
+          "variable": [
+            {
+              "key": "orderId",
+              "value": "{{orderId}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Orders/OrderID/Message/messagesID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/Orders/:orderId/messages/:messageID",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Orders",
+            ":orderId",
+            "messages",
+            ":messageID"
+          ],
+          "variable": [
+            {
+              "key": "orderId",
+              "value": "{{orderId}}"
+            },
+            {
+              "key": "messageID",
+              "value": "{{messageId}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Orders/OrderID/Documents",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/Orders/:orderId/Documents",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Orders",
+            ":orderId",
+            "Documents"
+          ],
+          "variable": [
+            {
+              "key": "orderId",
+              "value": "{{orderId}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Orders/OrderID/Documents/DOCID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/Orders/:orderId/Documents/:docId",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Orders",
+            ":orderId",
+            "Documents",
+            ":docId"
+          ],
+          "variable": [
+            {
+              "key": "orderId",
+              "value": "{{orderId}}"
+            },
+            {
+              "key": "docId",
+              "value": "{{documentId}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Orders/OrderID/Contacts",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          },
+          {
+            "key": "X-RecipientEmail",
+            "value": "Piyush.Jain@fnf.com"
+          },
+          {
+            "key": "X-UserName",
+            "value": "fnfglobal\\Piyush.Jain"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/Orders/:orderId/Contacts",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Orders",
+            ":orderId",
+            "Contacts"
+          ],
+          "variable": [
+            {
+              "key": "orderId",
+              "value": "{{orderId}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Messages/Summary",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          },
+          {
+            "key": "X-RecipientEmail",
+            "value": "Piyush.Jain@fnf.com"
+          },
+          {
+            "key": "X-UserName",
+            "value": "fnfglobal\\Piyush.Jain"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/Messages/Summary",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Messages",
+            "Summary"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Documents",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/Documents",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Documents"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Document/Guid",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/Documents/:guid",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Documents",
+            ":guid"
+          ],
+          "variable": [
+            {
+              "key": "guid",
+              "value": "{{guid}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Document/Guid Copy",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/Documents/:guid",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Documents",
+            ":guid"
+          ],
+          "variable": [
+            {
+              "key": "guid",
+              "value": "{{guid}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Orders/{orderId}/Messages",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Ocp-Apim-Subscription-Key",
+            "value": "{{APIKey}}"
+          },
+          {
+            "key": "X-RecipientEmail",
+            "value": "Piyush.Jain@fnf.com"
+          },
+          {
+            "key": "X-UserName",
+            "value": "fnfglobal\\Piyush.Jain"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"messages\": [\r\n    {\r\n      \"id\": \"f1b08d19-6666-4735-922e-41ff5555d49f\",\r\n      \"isRead\": true\r\n    }\r\n  ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/Orders/:orderId/Messages",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "Orders",
+            ":orderId",
+            "Messages"
+          ],
+          "query": [
+            {
+              "key": "orderId",
+              "value": "",
+              "disabled": true
+            }
+          ],
+          "variable": [
+            {
+              "key": "orderId",
+              "value": "{{orderId}}"
+            }
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "Bad Request",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "<API Key>",
+                "description": "Added as a part of security scheme: apikey"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "ReplyGuid",
+                  "value": "esse amet",
+                  "type": "text"
+                },
+                {
+                  "key": "Body",
+                  "value": "anim et consequat",
+                  "type": "text"
+                },
+                {
+                  "key": "Subject",
+                  "value": "reprehenderit Duis enim dolore",
+                  "type": "text"
+                },
+                {
+                  "key": "Documents",
+                  "value": "[\"sin\",\"esse et aliquip\"]",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/Orders/:orderId/Messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Orders",
+                ":orderId",
+                "Messages"
+              ],
+              "variable": [
+                {
+                  "key": "orderId"
+                }
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n \"statusCode\": 38563549,\n \"errorMessage\": \"esse dolor id\"\n}"
+        },
+        {
+          "name": "Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "<API Key>",
+                "description": "Added as a part of security scheme: apikey"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "ReplyGuid",
+                  "value": "esse amet",
+                  "type": "text"
+                },
+                {
+                  "key": "Body",
+                  "value": "anim et consequat",
+                  "type": "text"
+                },
+                {
+                  "key": "Subject",
+                  "value": "reprehenderit Duis enim dolore",
+                  "type": "text"
+                },
+                {
+                  "key": "Documents",
+                  "value": "[\"sin\",\"esse et aliquip\"]",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/Orders/:orderId/Messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Orders",
+                ":orderId",
+                "Messages"
+              ],
+              "variable": [
+                {
+                  "key": "orderId"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n \"createdByName\": \"ullamco\",\n \"createdOn\": \"proident Ut velit qui reprehenderit\",\n \"orderNumber\": \"dolor ut deser\",\n \"id\": \"id in cillum\",\n \"isSentFromWeb\": true,\n \"subject\": \"Excepteur eiusmod voluptate dolor\",\n \"body\": \"esse ad voluptate\",\n \"createdBy\": \"anim dolore voluptate cillum\",\n \"isRead\": false,\n \"documents\": [\n  {\n   \"extension\": \"\",\n   \"filename\": \"non ut\",\n   \"id\": \"in occaecat laboris\",\n   \"size\": 28756650,\n   \"createdOn\": \"ut occaecat dolor do\",\n   \"publishedOn\": \"anim reprehenderit aliqua magna\"\n  },\n  {\n   \"extension\": \"n\",\n   \"filename\": \"Ut Duis\",\n   \"id\": \"incididunt ullamco id dolore\",\n   \"size\": 22912273,\n   \"createdOn\": \"ut sunt\",\n   \"publishedOn\": \"qui tempor\"\n  }\n ]\n}"
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "scope",
+        "value": "openid profile email",
+        "type": "string"
+      },
+      {
+        "key": "state",
+        "value": "NotImportant",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "body",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "{{callback}}",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "{{clientid}}",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "{{AccessTokenURl}}",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "{{Authurl}}",
+        "type": "string"
+      },
+      {
+        "key": "grant_type",
+        "value": "authorization_code_with_pkce",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}

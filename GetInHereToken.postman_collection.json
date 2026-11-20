@@ -1,0 +1,142 @@
+{
+  "info": {
+    "_postman_id": "6cd20dc6-13e3-4da6-bdf5-bc4495a8d376",
+    "name": "GetInHereToken",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48098548",
+    "_collection_link": "https://go.postman.co/collection/48098548-6cd20dc6-13e3-4da6-bdf5-bc4495a8d376?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Generate Token",
+      "item": [
+        {
+          "name": "GetInHereToken",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Validate the response time is less than 3000ms\", function(){\r\n\tpm.expect(pm.response.responseTime).to.be.below(3000);\r\n});\r\n\r\nlet jsonResponse = pm.response.json();\r\nconst access_token = jsonResponse.access_token;\r\npm.collectionVariables.set('inhere_token', access_token);\r\npm.environment.set('access_token', access_token);\r\n"
+                ]
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-RecipientEmail",
+                "value": "piyush.jain@fnf.com"
+              },
+              {
+                "key": "X-UserName",
+                "value": "fnfglobal\\piyush.jain"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "client_id",
+                  "value": "0oa24x2ttouHoxOVn0h8"
+                },
+                {
+                  "key": "client_secret",
+                  "value": "{{SVO-InHere-CS}}"
+                },
+                {
+                  "key": "scope",
+                  "value": "smartview.registrations.manage"
+                },
+                {
+                  "key": "grant_type",
+                  "value": "client_credentials"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://inhere.oktapreview.com/oauth2/aus1ph1e3r11sEwhD0h8/v1/token",
+              "protocol": "https",
+              "host": [
+                "inhere",
+                "oktapreview",
+                "com"
+              ],
+              "path": [
+                "oauth2",
+                "aus1ph1e3r11sEwhD0h8",
+                "v1",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "SVO-InHere-CS",
+      "value": "P2kJdBm9Q69QwtOPn6wEh9v5b89vHN4WKWdTRkE_laTKPDIAwWNQwMTSodrOtLT_"
+    },
+    {
+      "key": "baseUrl",
+      "value": "https://ctpapi.smartviewonline.net/inhere"
+    },
+    {
+      "key": "subscriptionKey",
+      "value": "d4aac93111804a4fa05e046c551779db"
+    },
+    {
+      "key": "inhere_token",
+      "value": ""
+    },
+    {
+      "key": "e",
+      "value": ""
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    }
+  ]
+}

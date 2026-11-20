@@ -1,0 +1,53 @@
+{
+  "info": {
+    "_postman_id": "af89add4-f3e2-4393-8d89-784f9a561a3e",
+    "name": "Metadata",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48098548",
+    "_collection_link": "https://go.postman.co/collection/48098548-af89add4-f3e2-4393-8d89-784f9a561a3e?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "metadata1",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "metadata",
+            "value": "true",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://169.254.169.254/metadata/instance?api-version=2021-12-13",
+          "protocol": "http",
+          "host": [
+            "169",
+            "254",
+            "169",
+            "254"
+          ],
+          "path": [
+            "metadata",
+            "instance"
+          ],
+          "query": [
+            {
+              "key": "api-version",
+              "value": "2021-12-13"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "metadata2",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
